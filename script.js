@@ -151,7 +151,7 @@ btnLogin.addEventListener('click', function(e) {
   e.preventDefault();
   currentAccount = accounts.find(account => account.nickname === inputLoginUsername.value);
   console.log(currentAccount);
-  if(currentAccount?.pin === Number(inputLoginPin.value)) {
+  if(currentAccount?.pin === +(inputLoginPin.value)) {
     //display Ui welcome message
     labelWelcome.textContent = `Hi ${currentAccount.userName.split(' ')[0]}!!! Whhhhaaaaazzzzuuuup?!`;
     containerApp.style.opacity = 1;
@@ -166,7 +166,7 @@ btnLogin.addEventListener('click', function(e) {
 
 btnTransfer.addEventListener('click', function(e) {
   e.preventDefault();
-  const transferAmount = Number(inputTransferAmount.value);
+  const transferAmount = +(inputTransferAmount.value);
   const recipientNickname = inputTransferTo.value;
   const recipientAccount = accounts.find(account => account.nickname === recipientNickname);
   console.log(transferAmount);
@@ -182,15 +182,26 @@ btnTransfer.addEventListener('click', function(e) {
 
 btnClose.addEventListener('click', function(e) {
   e.preventDefault();
-  if(inputCloseNickname.value === currentAccount.nickname && Number(inputClosePin.value) === currentAccount.pin) {
+  if(inputCloseNickname.value === currentAccount.nickname && +(inputClosePin.value) === currentAccount.pin) {
     const currentAccountIndex = accounts.findIndex(account => account.nickname === currentAccount.nickname);
     accounts.splice(currentAccountIndex, 1); //1 в данном случае количество удаленных элементов
     containerApp.style.opacity = 0;
     labelWelcome.textContent = 'Come in';
   }
-  inputCloseNickname.value ='';
+  inputCloseNickname.value = '';
   inputClosePin.value = '';
 });
+
+
+btnLoan.addEventListener('click', function(e) {
+  e.preventDefault();
+  const loanAmount = +(inputLoanAmount.value);
+  if(loanAmount > 0 && currentAccount.transactions.some(depos => depos >= loanAmount * 0.1)) {
+    currentAccount.transactions.push(loanAmount);
+    upDateUi(currentAccount);
+  }
+  inputLoanAmount.value = '';
+})
 
 let transactionsSorted = false;
 
@@ -202,20 +213,20 @@ btnSort.addEventListener('click', function(e) {
 
 // Array.from() example
 
-
-
 // const logoImage = document.querySelector('.logo');
 // logoImage.addEventListener('click', function() {
 //   const transactionsUi = document.querySelectorAll('.transactions__value');
 //   console.log(transactionsUi);
 //   const transactionsUiArray = Array.from(transactionsUi);
-//   console.log(transactionsUiArray.map(elem => Number(elem.textContent)));
+//   console.log(transactionsUiArray.map(elem => +(elem.textContent)));
 // });
 
 const logoImage = document.querySelector('.logo');
 logoImage.addEventListener('click', function() {
   const transactionsUi = document.querySelectorAll('.transactions__value');
   console.log(transactionsUi);
-  const transactionsUiArray = Array.from(transactionsUi, elem => Number(elem.textContent));
+  const transactionsUiArray = Array.from(transactionsUi, elem => +(elem.textContent));
   console.log(transactionsUiArray);
 });
+
+// change Number -> +
