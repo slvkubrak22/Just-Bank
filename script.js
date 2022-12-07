@@ -220,8 +220,8 @@ btnSort.addEventListener('click', function(e) {
 //   console.log(transactionsUiArray.map(elem => +(elem.textContent)));
 // });
 
-const logoImage = document.querySelector('.logo');
-logoImage.addEventListener('click', function() {
+const logoTopImage = document.querySelector('.logo');
+logoTopImage.addEventListener('click', function() {
   const transactionsUi = document.querySelectorAll('.transactions__value');
   console.log(transactionsUi);
   const transactionsUiArray = Array.from(transactionsUi, elem => +(elem.textContent));
@@ -231,3 +231,12 @@ logoImage.addEventListener('click', function() {
 // change Number -> +
 
 // added loan function 
+
+const logoImage = document.querySelector('.logo');
+logoImage.addEventListener('click', function() {
+  [...document.querySelectorAll('.transactions__row')].forEach((row, index) => {
+    if(index % 2 === 0) {
+      row.style.backgroundColor = 'grey';
+    }
+  })
+});
