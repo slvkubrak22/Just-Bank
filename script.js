@@ -4,7 +4,7 @@
 
 const account1 = {
   userName: 'Cecil Ireland',
-  transactions: [500, 250, -300, 5000, -850, -110, -170, 1100],
+  transactions: [500.32, 250, -300.92, 5000, -850, -110, -170, 1100],
   interest: 1.5,
   pin: 1111,
 };
@@ -78,7 +78,7 @@ const displayTransactions = function(transactions, sort = false) {
       <div class="transactions__type transactions__type--${transType}">
        ${index + 1} ${transType}
       </div>
-      <div class="transactions__value">${trans}</div>
+      <div class="transactions__value">${trans.toFixed(2)}</div>
     </div>
     `;
     containerTransactions.insertAdjacentHTML('afterbegin', transactionRow);
@@ -111,17 +111,17 @@ console.log(accounts);
 const displayBalance = function(account) {
   const balance = account.transactions.reduce((acc, trans) => acc + trans, 0);
   account.balance = balance;
-  labelBalance.textContent = `${balance}$`;
+  labelBalance.textContent = `${balance.toFixed(2)}$`;
 
 }
 
 
 const displayTotal = function(account) {
   const depositesTotal = account.transactions.filter(trans => trans > 0).reduce((acc, trans) => acc + trans, 0);
-  labelSumIn.textContent = `${depositesTotal}$`; 
+  labelSumIn.textContent = `${depositesTotal.toFixed(2)}$`; 
 
   const withdrawalsTotal = account.transactions.filter(trans => trans < 0).reduce((acc, trans) => acc + trans, 0);
-  labelSumOut.textContent = `${withdrawalsTotal}$`;
+  labelSumOut.textContent = `${withdrawalsTotal.toFixed(2)}$`;
 
   const interestTotal = account.transactions
     .filter(trans => trans > 0)
@@ -192,10 +192,9 @@ btnClose.addEventListener('click', function(e) {
   inputClosePin.value = '';
 });
 
-
 btnLoan.addEventListener('click', function(e) {
   e.preventDefault();
-  const loanAmount = +(inputLoanAmount.value);
+  const loanAmount = Math.floor(+inputLoanAmount.value);
   if(loanAmount > 0 && currentAccount.transactions.some(depos => depos >= loanAmount * 0.1)) {
     currentAccount.transactions.push(loanAmount);
     upDateUi(currentAccount);
@@ -230,3 +229,5 @@ logoImage.addEventListener('click', function() {
 });
 
 // change Number -> +
+
+// added loan function 
