@@ -13,9 +13,9 @@ const account1 = {
     '2020-11-15T10:45:23.907Z',
     '2021-01-22T12:17:46.255Z',
     '2021-02-12T15:14:06.486Z',
-    '2021-03-09T11:42:26.371Z',
-    '2021-05-21T07:43:59.331Z',
-    '2021-06-22T15:21:20.814Z',
+    '2022-12-06T11:42:26.371Z',
+    '2022-12-07T07:43:59.331Z',
+    '2022-12-08T15:21:20.814Z',
   ],
   currency: 'USD',
   locale: 'en-US',
@@ -119,6 +119,25 @@ const inputLoanAmount = document.querySelector('.form__input--loan-amount');
 const inputCloseNickname = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 
+const formatTransactionDate = function(date) {
+
+  const getDaysBetween2Dates = (date1, date2) => Math.round(Math.abs((date2 - date1) / (1000 * 60 * 60 * 24)));
+  
+  const daysPassed = getDaysBetween2Dates(new Date(), date);
+  console.log(daysPassed);
+
+  if(daysPassed === 0) return 'Today';
+  if(daysPassed === 1) return 'Yesterday';
+  if(daysPassed <= 7) return `${daysPassed} days ago`;
+  else {
+    const day = `${date.getDate()}`.padStart(2, '0'); // current day. padStart useful when the date is 1 - 9. And it looks better 01 - 09. So if date length < 2 0 will appear before the date number
+    const month = `${date.getMonth() + 1}`.padStart(2, '0'); // current month
+    const year = date.getFullYear(); // current year
+    return `${day}/${month}/${year}`;
+  }
+}
+
+
 const displayTransactions = function(account, sort = false) { 
 
   const transacs = sort ? account.transactions.slice().sort((x, y) => x - y) : account.transactions;
@@ -129,12 +148,7 @@ const displayTransactions = function(account, sort = false) {
     const transType = trans > 0 ? 'deposit' : 'withdrawal'; 
 
     const date = new Date(account.transactionsDates[index]);
-    const day = `${date.getDate()}`.padStart(2, '0'); // current day. padStart useful when the date is 1 - 9. And it looks better 01 - 09. So if date length < 2 0 will appear before the date number
-    const month = `${date.getMonth() + 1}`.padStart(2, '0'); // current month
-    const year = date.getFullYear(); // current year
-    
-
-    const transDate = `${day}/${month}/${year}`;
+    const transDate = formatTransactionDate(date);
 
     const transactionRow = `
     <div class="transactions__row">
