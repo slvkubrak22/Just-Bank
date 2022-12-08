@@ -7,7 +7,7 @@ const account1 = {
   transactions: [500.32, 250, -300.92, 5000, -850, -110, -170, 1100],
   interest: 1.5,
   pin: 1111,
-   transactionsDates: [
+  transactionsDates: [
     '2020-10-02T14:43:31.074Z',
     '2020-10-29T11:24:19.761Z',
     '2020-11-15T10:45:23.907Z',
@@ -19,7 +19,6 @@ const account1 = {
   ],
   currency: 'USD',
   locale: 'en-US',
- 
 };
 
 const account2 = {
@@ -27,7 +26,7 @@ const account2 = {
   transactions: [2000, 6400, -1350, -70, -210, -2000, 5500, -30],
   interest: 1.3,
   pin: 2222,
-   transactionsDates: [
+  transactionsDates: [
     '2020-10-02T14:43:31.074Z',
     '2020-10-29T11:24:19.761Z',
     '2020-11-15T10:45:23.907Z',
@@ -39,7 +38,6 @@ const account2 = {
   ],
   currency: 'UAH',
   locale: 'uk-UA',
-
 };
 
 const account3 = {
@@ -47,7 +45,7 @@ const account3 = {
   transactions: [900, -200, 280, 300, -200, 150, 1400, -400],
   interest: 0.8,
   pin: 3333,
-   transactionsDates: [
+  transactionsDates: [
     '2020-10-02T14:43:31.074Z',
     '2020-10-29T11:24:19.761Z',
     '2020-11-15T10:45:23.907Z',
@@ -59,7 +57,6 @@ const account3 = {
   ],
   currency: 'RUB',
   locale: 'ru-RU',
- 
 };
 
 const account4 = {
@@ -67,19 +64,15 @@ const account4 = {
   transactions: [530, 1300, 500, 40, 190],
   interest: 1,
   pin: 4444,
-   transactionsDates: [
+  transactionsDates: [
     '2020-10-02T14:43:31.074Z',
     '2020-10-29T11:24:19.761Z',
     '2020-11-15T10:45:23.907Z',
     '2021-01-22T12:17:46.255Z',
     '2021-02-12T15:14:06.486Z',
-    '2021-03-09T11:42:26.371Z',
-    '2021-05-21T07:43:59.331Z',
-    '2021-06-22T15:21:20.814Z',
   ],
   currency: 'EUR',
   locale: 'fr-CA',
-
 };
 
 const account5 = {
@@ -87,19 +80,15 @@ const account5 = {
   transactions: [630, 800, 300, 50, 120],
   interest: 1.1,
   pin: 5555,
-   transactionsDates: [
+  transactionsDates: [
     '2020-10-02T14:43:31.074Z',
     '2020-10-29T11:24:19.761Z',
     '2020-11-15T10:45:23.907Z',
     '2021-01-22T12:17:46.255Z',
     '2021-02-12T15:14:06.486Z',
-    '2021-03-09T11:42:26.371Z',
-    '2021-05-21T07:43:59.331Z',
-    '2021-06-22T15:21:20.814Z',
   ],
   currency: 'USD',
   locale: 'en-US',
-
 };
 
 const accounts = [account1, account2, account3, account4, account5];
@@ -130,19 +119,29 @@ const inputLoanAmount = document.querySelector('.form__input--loan-amount');
 const inputCloseNickname = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 
-const displayTransactions = function(transactions, sort = false) { 
+const displayTransactions = function(account, sort = false) { 
 
-  const transacs = sort ? transactions.slice().sort((x, y) => x - y) : transactions;
+  const transacs = sort ? account.transactions.slice().sort((x, y) => x - y) : account.transactions;
 
   containerTransactions.innerHTML = '';
 
   transacs.forEach(function(trans, index) {
     const transType = trans > 0 ? 'deposit' : 'withdrawal'; 
+
+    const date = new Date(account.transactionsDates[index]);
+    const day = `${date.getDate()}`.padStart(2, '0'); // current day. padStart useful when the date is 1 - 9. And it looks better 01 - 09. So if date length < 2 0 will appear before the date number
+    const month = `${date.getMonth() + 1}`.padStart(2, '0'); // current month
+    const year = date.getFullYear(); // current year
+    
+
+    const transDate = `${day}/${month}/${year}`;
+
     const transactionRow = `
     <div class="transactions__row">
       <div class="transactions__type transactions__type--${transType}">
        ${index + 1} ${transType}
       </div>
+      <div class="transactions__date">${transDate}</div>
       <div class="transactions__value">${trans.toFixed(2)}</div>
     </div>
     `;
@@ -202,7 +201,7 @@ const displayTotal = function(account) {
 // console.log(coreyMartinez);
 
 const upDateUi = function(account) {
-  displayTransactions(account.transactions);
+  displayTransactions(account);
   //disp balance
   displayBalance(account);
   //disp total
@@ -210,6 +209,17 @@ const upDateUi = function(account) {
 }
 
 let currentAccount; 
+
+// Always logged in 
+// currentAccount = account1;
+// upDateUi(currentAccount);
+// containerApp.style.opacity = 100; 
+
+// const now = new Date(); // every time when we started our program, the current time wi'll showed
+// const day = `${now.getDate()}`.padStart(2, '0'); // current day. padStart useful when the date is 1 - 9. And it looks better 01 - 09. So if date length < 2 0 will appear before the date number
+// const month = `${now.getMonth() + 1}`.padStart(2, '0'); // current month
+// const year = now.getFullYear(); // current year
+// labelDate.textContent = `${day}/${month}/${year}`;
 
 btnLogin.addEventListener('click', function(e) {
   e.preventDefault();
@@ -219,6 +229,12 @@ btnLogin.addEventListener('click', function(e) {
     //display Ui welcome message
     labelWelcome.textContent = `Hi ${currentAccount.userName.split(' ')[0]}!!! Whhhhaaaaazzzzuuuup?!`;
     containerApp.style.opacity = 1;
+
+    const now = new Date(); // every time when we started our program, the current time wi'll showed
+    const day = `${now.getDate()}`.padStart(2, '0'); // current day. padStart useful when the date is 1 - 9. And it looks better 01 - 09. So if date length < 2 0 will appear before the date number
+    const month = `${now.getMonth() + 1}`.padStart(2, '0'); // current month
+    const year = now.getFullYear(); // current year
+    labelDate.textContent = `${day}/${month}/${year}`;
     //clear input
     inputLoginUsername.value = '';
     inputLoginPin.value = '';
@@ -236,8 +252,13 @@ btnTransfer.addEventListener('click', function(e) {
   console.log(transferAmount);
   console.log(recipientAccount);
   if(transferAmount > 0 && currentAccount.balance >= transferAmount && recipientAccount && recipientAccount.nickname !== currentAccount.nickname) {
+    // add transfers
     currentAccount.transactions.push(-transferAmount);
     recipientAccount.transactions.push(transferAmount);
+
+    // add transactions date
+    currentAccount.transactionsDates.push(new Date().toISOString());
+    recipientAccount.transactionsDates.push(new Date().toISOString());
     upDateUi(currentAccount);
   }
   inputTransferAmount.value = '';
@@ -261,6 +282,7 @@ btnLoan.addEventListener('click', function(e) {
   const loanAmount = Math.floor(+inputLoanAmount.value);
   if(loanAmount > 0 && currentAccount.transactions.some(depos => depos >= loanAmount * 0.1)) {
     currentAccount.transactions.push(loanAmount);
+    currentAccount.transactionsDates.push(new Date().toISOString());
     upDateUi(currentAccount);
   }
   inputLoanAmount.value = '';
@@ -270,7 +292,7 @@ let transactionsSorted = false;
 
 btnSort.addEventListener('click', function(e) {
   e.preventDefault();
-  displayTransactions(currentAccount.transactions, !transactionsSorted);
+  displayTransactions(currentAccount, !transactionsSorted);
   transactionsSorted = !transactionsSorted;
 });
 
@@ -298,9 +320,12 @@ logotopImage.addEventListener('click', function() {
 
 const logoImage = document.querySelector('.logo');
 logoImage.addEventListener('click', function() {
-  [...document.querySelectorAll('.transactions__row')].forEach((row, index) => {
+  [...document.querySelectorAll('.transactions__row')].forEach((п, index) => {
     if(index % 2 === 0) {
-      row.style.backgroundColor = 'grey';
+      п.style.backgroundColor = 'grey';
     }
   })
 });
+
+// console.log([...document.querySelectorAll('.transactions__row')].forEach((row, index) => console.log(row, index)));
+
