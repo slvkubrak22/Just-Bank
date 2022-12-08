@@ -119,7 +119,7 @@ const inputLoanAmount = document.querySelector('.form__input--loan-amount');
 const inputCloseNickname = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 
-const formatTransactionDate = function(date) {
+const formatTransactionDate = function(date, locale) {
 
   const getDaysBetween2Dates = (date1, date2) => Math.round(Math.abs((date2 - date1) / (1000 * 60 * 60 * 24)));
   
@@ -130,10 +130,11 @@ const formatTransactionDate = function(date) {
   if(daysPassed === 1) return 'Yesterday';
   if(daysPassed <= 7) return `${daysPassed} days ago`;
   else {
-    const day = `${date.getDate()}`.padStart(2, '0'); // current day. padStart useful when the date is 1 - 9. And it looks better 01 - 09. So if date length < 2 0 will appear before the date number
-    const month = `${date.getMonth() + 1}`.padStart(2, '0'); // current month
-    const year = date.getFullYear(); // current year
-    return `${day}/${month}/${year}`;
+    // const day = `${date.getDate()}`.padStart(2, '0'); // current day. padStart useful when the date is 1 - 9. And it looks better 01 - 09. So if date length < 2 0 will appear before the date number
+    // const month = `${date.getMonth() + 1}`.padStart(2, '0'); // current month
+    // const year = date.getFullYear(); // current year
+    // return `${day}/${month}/${year}`;
+    return new Intl.DateTimeFormat(locale).format(date);
   }
 }
 
@@ -148,7 +149,7 @@ const displayTransactions = function(account, sort = false) {
     const transType = trans > 0 ? 'deposit' : 'withdrawal'; 
 
     const date = new Date(account.transactionsDates[index]);
-    const transDate = formatTransactionDate(date);
+    const transDate = formatTransactionDate(date, account.locale);
 
     const transactionRow = `
     <div class="transactions__row">
@@ -225,9 +226,9 @@ const upDateUi = function(account) {
 let currentAccount; 
 
 // Always logged in 
-// currentAccount = account1;
-// upDateUi(currentAccount);
-// containerApp.style.opacity = 100; 
+currentAccount = account1;
+upDateUi(currentAccount);
+containerApp.style.opacity = 100; 
 
 // const now = new Date(); // every time when we started our program, the current time wi'll showed
 // const day = `${now.getDate()}`.padStart(2, '0'); // current day. padStart useful when the date is 1 - 9. And it looks better 01 - 09. So if date length < 2 0 will appear before the date number
@@ -235,20 +236,36 @@ let currentAccount;
 // const year = now.getFullYear(); // current year
 // labelDate.textContent = `${day}/${month}/${year}`;
 
+
+
 btnLogin.addEventListener('click', function(e) {
   e.preventDefault();
   currentAccount = accounts.find(account => account.nickname === inputLoginUsername.value);
   console.log(currentAccount);
   if(currentAccount?.pin === +(inputLoginPin.value)) {
     //display Ui welcome message
-    labelWelcome.textContent = `Hi ${currentAccount.userName.split(' ')[0]}!!! Whhhhaaaaazzzzuuuup?!`;
+    labelWelcome.textContent = `Hi ${currentAccount.userName.split(' ')[0]}!!! Glad to see you!`;
     containerApp.style.opacity = 1;
 
+    // const now = new Date(); // every time when we started our program, the current time wi'll showed
+    // const day = `${now.getDate()}`.padStart(2, '0'); // current day. padStart useful when the date is 1 - 9. And it looks better 01 - 09. So if date length < 2 0 will appear before the date number
+    // const month = `${now.getMonth() + 1}`.padStart(2, '0'); // current month
+    // const year = now.getFullYear(); // current year
+    // labelDate.textContent = `${day}/${month}/${year}`;
+
     const now = new Date(); // every time when we started our program, the current time wi'll showed
-    const day = `${now.getDate()}`.padStart(2, '0'); // current day. padStart useful when the date is 1 - 9. And it looks better 01 - 09. So if date length < 2 0 will appear before the date number
-    const month = `${now.getMonth() + 1}`.padStart(2, '0'); // current month
-    const year = now.getFullYear(); // current year
-    labelDate.textContent = `${day}/${month}/${year}`;
+    const options = {
+      hour: 'numeric',
+      minute: 'numeric',
+      day: 'numeric',
+      month: '2-digit', // month: 'numeric', month: 'long',
+      year: 'numeric',
+      weekday: 'long',
+    };
+    // const locale = navigator.language;
+
+    labelDate.textContent = new Intl.DateTimeFormat(currentAccount.locale, options).format(now);
+
     //clear input
     inputLoginUsername.value = '';
     inputLoginPin.value = '';
