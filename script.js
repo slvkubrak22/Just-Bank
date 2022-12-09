@@ -323,9 +323,11 @@ btnLoan.addEventListener('click', function(e) {
   e.preventDefault();
   const loanAmount = Math.floor(+inputLoanAmount.value);
   if(loanAmount > 0 && currentAccount.transactions.some(depos => depos >= loanAmount * 0.1)) {
-    currentAccount.transactions.push(loanAmount);
-    currentAccount.transactionsDates.push(new Date().toISOString());
-    upDateUi(currentAccount);
+    setTimeout(function() {
+      currentAccount.transactions.push(loanAmount);
+      currentAccount.transactionsDates.push(new Date().toISOString());
+      upDateUi(currentAccount);
+    }, 3000);
   }
   inputLoanAmount.value = '';
 })
