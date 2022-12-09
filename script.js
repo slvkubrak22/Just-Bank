@@ -71,7 +71,7 @@ const account4 = {
     '2021-01-22T12:17:46.255Z',
     '2021-02-12T15:14:06.486Z',
   ],
-  currency: 'EUR',
+  currency: 'CAD',
   locale: 'fr-CA',
 };
 
@@ -119,6 +119,15 @@ const inputLoanAmount = document.querySelector('.form__input--loan-amount');
 const inputCloseNickname = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 
+const formatCurrency = function(value, locale, currency) {
+  return new Intl.NumberFormat(locale, {
+    style: 'currency',
+    currency: currency,
+  }).format(value);
+}
+
+
+
 const formatTransactionDate = function(date, locale) {
 
   const getDaysBetween2Dates = (date1, date2) => Math.round(Math.abs((date2 - date1) / (1000 * 60 * 60 * 24)));
@@ -151,13 +160,15 @@ const displayTransactions = function(account, sort = false) {
     const date = new Date(account.transactionsDates[index]);
     const transDate = formatTransactionDate(date, account.locale);
 
+    const formattedTrans = formatCurrency(trans, account.locale, account.currency);
+
     const transactionRow = `
     <div class="transactions__row">
       <div class="transactions__type transactions__type--${transType}">
        ${index + 1} ${transType}
       </div>
       <div class="transactions__date">${transDate}</div>
-      <div class="transactions__value">${trans.toFixed(2)}</div>
+      <div class="transactions__value">${formattedTrans} </div>
     </div>
     `;
     containerTransactions.insertAdjacentHTML('afterbegin', transactionRow);
@@ -190,16 +201,16 @@ console.log(accounts);
 const displayBalance = function(account) {
   const balance = account.transactions.reduce((acc, trans) => acc + trans, 0);
   account.balance = balance;
-  labelBalance.textContent = `${balance.toFixed(2)}$`;
-  }
+  labelBalance.textContent = formatCurrency(balance, account.locale, account.currency);
+};
 
 
 const displayTotal = function(account) {
   const depositesTotal = account.transactions.filter(trans => trans > 0).reduce((acc, trans) => acc + trans, 0);
-  labelSumIn.textContent = `${depositesTotal.toFixed(2)}$`;
+  labelSumIn.textContent = formatCurrency(depositesTotal, account.locale, account.currency);;
 
   const withdrawalsTotal = account.transactions.filter(trans => trans < 0).reduce((acc, trans) => acc + trans, 0);
-  labelSumOut.textContent = `${withdrawalsTotal.toFixed(2)}$`;
+  labelSumOut.textContent = formatCurrency(withdrawalsTotal, account.locale, account.currency);
 
   const interestTotal = account.transactions
     .filter(trans => trans > 0)
@@ -209,7 +220,7 @@ const displayTotal = function(account) {
       return interest >= 5;
     })
     .reduce((acc, interest) => acc + interest, 0);
-  labelSumInterest.textContent = `${interestTotal.toFixed(2)}$`;
+  labelSumInterest.textContent = formatCurrency(interestTotal, account.locale, account.currency);;
 };
 
 // const coreyMartinez = accounts.find(account => account.userName === 'Corey Martinez');
@@ -359,4 +370,5 @@ logoImage.addEventListener('click', function() {
 });
 
 // console.log([...document.querySelectorAll('.transactions__row')].forEach((row, index) => console.log(row, index)));
+
 
