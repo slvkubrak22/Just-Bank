@@ -234,12 +234,12 @@ const upDateUi = function(account) {
   displayTotal(account);
 }
 
-let currentAccount; 
+let currentAccount, currentLogOutTimer; 
 
 // Always logged in 
-currentAccount = account1;
-upDateUi(currentAccount);
-containerApp.style.opacity = 100; 
+// currentAccount = account1;
+// upDateUi(currentAccount);
+// containerApp.style.opacity = 100; 
 
 // const now = new Date(); // every time when we started our program, the current time wi'll showed
 // const day = `${now.getDate()}`.padStart(2, '0'); // current day. padStart useful when the date is 1 - 9. And it looks better 01 - 09. So if date length < 2 0 will appear before the date number
@@ -247,7 +247,29 @@ containerApp.style.opacity = 100;
 // const year = now.getFullYear(); // current year
 // labelDate.textContent = `${day}/${month}/${year}`;
 
+const startLogoutTimer = function() {
+  const logOutTimerCallBack = function() {
+    const minutes = String(Math.trunc(time / 60)).padStart(2, '0');
+    const seconds = String(time % 60).padStart(2, '0');
+    // 3. In each calling show the rest time in UI
+    labelTimer.textContent = `${minutes}:${seconds}`;
+    
+    // 4. After the timeout stop timer and exit from application
+    if(time === 0) {
+      clearInterval(logoutTimer);
+      labelWelcome.textContent = 'Log in your account';
+      containerApp.style.opacity = 0;
+    }
+    time--;
+  }
+  // 1. set the logout timer 5 minutes
+  let time = 300;
+  // 2. Calling timer every second
+  logOutTimerCallBack();
+  const logoutTimer = setInterval(logOutTimerCallBack, 1000);
 
+  return logoutTimer;
+};
 
 btnLogin.addEventListener('click', function(e) {
   e.preventDefault();
@@ -281,6 +303,11 @@ btnLogin.addEventListener('click', function(e) {
     inputLoginUsername.value = '';
     inputLoginPin.value = '';
     inputLoginPin.blur();
+
+    // Check if the timer exists
+    if(currentLogOutTimer) clearInterval(currentLogOutTimer);
+    currentLogOutTimer = startLogoutTimer();
+
     // disp trans
     upDateUi(currentAccount);
   };
@@ -302,6 +329,9 @@ btnTransfer.addEventListener('click', function(e) {
     currentAccount.transactionsDates.push(new Date().toISOString());
     recipientAccount.transactionsDates.push(new Date().toISOString());
     upDateUi(currentAccount);
+    // Reset the timer
+    clearInterval(currentLogOutTimer);
+    currentLogOutTimer = startLogoutTimer();
   }
   inputTransferAmount.value = '';
   inputTransferTo.value = '';
@@ -327,9 +357,13 @@ btnLoan.addEventListener('click', function(e) {
       currentAccount.transactions.push(loanAmount);
       currentAccount.transactionsDates.push(new Date().toISOString());
       upDateUi(currentAccount);
+      
     }, 3000);
   }
   inputLoanAmount.value = '';
+  // Reset the timer
+  clearInterval(currentLogOutTimer);
+  currentLogOutTimer = startLogoutTimer();
 })
 
 let transactionsSorted = false;
